@@ -1,0 +1,49 @@
+consumer
+s7ccrNpe0fxOMknfhGalji955
+
+FmrCiUWkDl6eRVKG4dyq3DFXI1n4f3mIG4JotT4JhiKYoPQkOM
+
+access token
+
+826012518946443264-tyE9GLcBC80u3AE5WLCUqaTQFb0Rt8s
+
+RE6JUqtkUQyreXj1eB8YKgnnhMFdUqLdobueiAle5Z763
+
+flume-ng agent --conf $FLUME_CONF_DIR --conf-file $FLUME_CONF_DIR/niit.conf --name MyAgent
+
+W. Loading Avro type-data (flume) in Hive table
+--------------------------------------------
+CREATE TABLE tweets
+  ROW FORMAT SERDE
+     'org.apache.hadoop.hive.serde2.avro.AvroSerDe'
+  STORED AS INPUTFORMAT
+     'org.apache.hadoop.hive.ql.io.avro.AvroContainerInputFormat'
+  OUTPUTFORMAT
+     'org.apache.hadoop.hive.ql.io.avro.AvroContainerOutputFormat'
+  TBLPROPERTIES ('avro.schema.url'='file:/home/hduser/Twitter.avsc') ;
+
+LOAD DATA Local INPATH '/home/hduser/FlumeData.148*' OVERWRITE INTO
+TABLE tweets;
+
+CREATE TABLE tweets_csv (
+id string,
+user_friends_count int,
+user_location string,
+user_description string,
+user_statuses_count int,
+user_followers_count int,
+user_name string,
+user_screen_name string,
+created_at string,
+text string,
+retweet_count bigint,
+retweeted boolean,
+in_reply_to_user_id bigint,
+source string,
+in_reply_to_status_id bigint,
+media_url_https string,
+expanded_url string)
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ','
+STORED AS TEXTFILE;
+
+INSERT OVERWRITE TABLE tweets_csv SELECT * FROM tweets;
